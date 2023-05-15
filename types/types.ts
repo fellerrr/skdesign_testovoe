@@ -4,13 +4,13 @@ export interface DataType {
   lastName: string
   email: string
   phone: string
-  address: {
+  address?: {
     streetAddress: string
     city: string
     state: string
     zip: string
   }
-  description: string
+  description?: string
 }
 
 export interface DataState {

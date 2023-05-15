@@ -4,21 +4,31 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import InputMask from 'react-input-mask';
 
+import {useDispatch} from 'react-redux';
+import { addData } from '@/store/table/tableSlice';
+import {DataType} from "@/types/types";
+
+
+
+
+
+
 const schema = yup.object().shape({
   id: yup.number().typeError('Допускаются только цифры').required(),
-  firstName: yup.string().matches(/^[A-Za-z]+$/, 'Допускаются только буквы').required(),
-  lastName: yup.string().matches(/^[A-Za-z]+$/, 'Допускаются только буквы').required(),
+  firstName: yup.string().matches(/^[A-Za-zА-Яа-яЁё]+$/, 'Допускаются только буквы').required(),
+  lastName: yup.string().matches(/^[A-Za-zА-Яа-яЁё]+$/, 'Допускаются только буквы').required(),
   email: yup.string().email().required(),
   phone: yup.string().matches(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, 'Неправильно записан номер').required()
 });
 
-export default function Form({ closeModal }) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+export default function Form({ closeModal }: { closeModal: () => void }) {
+  const dispatch = useDispatch();
+  const { register, handleSubmit, formState: { errors } } = useForm<DataType>({
     resolver: yupResolver(schema)
   });
 
-  const onSubmit = data => {
-    console.log(data);
+  const onSubmit = (data: DataType) => {
+    dispatch(addData(data));
     closeModal()
   };
 
@@ -53,10 +63,31 @@ export default function Form({ closeModal }) {
       </div>
       <div className="mb-4">
         <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-2">Phone:</label>
-        <InputMask mask="+7 (999) 999-99-99" {...register('phone')}>
-          {(inputProps) => (
-            <input {...inputProps} type="tel" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phone" />
-          )}
+        {/*<InputMask mask="+7 (999) 999-99-99" {...register('phone')}>*/}
+        {/*  {(inputProps) => (*/}
+        {/*    <input {...inputProps} type="tel" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phone" />*/}
+        {/*  )}*/}
+        {/*</InputMask>*/}
+        {/*<InputMask mask="+7 (999) 999-99-99" {...register('phone')}>*/}
+        {/*  {(inputProps: { value: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void }) => (*/}
+        {/*    <input*/}
+        {/*      {...inputProps}*/}
+        {/*      type="tel"*/}
+        {/*      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"*/}
+        {/*      id="phone"*/}
+        {/*    />*/}
+        {/*  )}*/}
+        {/*</InputMask>*/}
+        <InputMask
+          mask="+7 (999) 999-99-99"
+          {...register('phone')}
+          maskChar="_"
+        >
+          <input
+            type="tel"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="phone"
+          />
         </InputMask>
         {errors.phone && <p className="text-red-500 text-xs italic">{errors.phone.message}</p>}
       </div>

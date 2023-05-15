@@ -9,16 +9,22 @@ import {
   getFilteredRowModel, RowData,
 } from '@tanstack/react-table'
 import {DataType} from "@/types/types";
-import { useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {DebouncedInput} from "@/components/DebouncedInput";
 import {AddRow} from "@/components/AddRow";
+import {useSelector} from "react-redux";
+import {selectData} from "@/store/table/tableSelectors";
 
-
-function App({dataTable}) {
+function App() {
+  const dataTable:DataType[] = useSelector(selectData).data
+  const [data, setData] = useState(() => [...dataTable])
+  useEffect(() => {
+    setData([...dataTable]);
+  }, [dataTable]);
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-  const [selectedRowData, setSelectedRowData] = useState<RowData>({})
+  const [selectedRowData, setSelectedRowData] = useState<DataType | RowData | {}>({})
 
   const columns = useMemo<ColumnDef<DataType>[]>(
     () => [
@@ -53,15 +59,12 @@ function App({dataTable}) {
     []
   )
 
-  const [data, setData] = useState(() => [...dataTable])
-
   const table = useReactTable({
     data,
     columns,
     state: {
       sorting,
       globalFilter,
-      selectedRowData,
     },
     initialState: {
       pagination: {
@@ -81,7 +84,6 @@ function App({dataTable}) {
 
     debugTable: true,
   })
-  console.log(selectedRowData)
   return (
     <div className="p-2 ">
       <AddRow/>
@@ -150,12 +152,6 @@ function App({dataTable}) {
               )
             })}
         </tbody>
-        {/*<tfoot>*/}
-        {/*  <tr>*/}
-        {/*    <td  colSpan={20}>*/}
-        {/*    </td>*/}
-        {/*  </tr>*/}
-        {/*</tfoot>*/}
       </table>
       <div className="flex items-center gap-2 w-full justify-center mt-4 text-green-800">
         <button
@@ -218,23 +214,20 @@ function App({dataTable}) {
           ))}
         </select>
       </div>
-      <div className='px-10 py-4 w-[800px] flex flex-col bg-amber-100 mt-4'>
-        <h2 className='mb-2 text-amber-950 font-semibold'>Подробнее:</h2>
-        {selectedRowData && <div >
-          {Object.entries(selectedRowData).map(([key, value]) => (
-            <div key={key}>
-              {<span className='text-orange-950 font-semibold'>{key}</span>}:{" "}
-              {typeof value === "object" && value !== null
-                // ? JSON.stringify(value)
-                ? Object.entries(value).map(([key, value]) => (
-                  <div key={key} className='pl-4'>
-                    {key}: {value}
-                  </div>))
-                : value}
-            </div>
-          ))}
-        </div>}
-      </div>
+
+
+      {Object.keys(selectedRowData as object).length > 0  &&<div className='px-10 py-4 w-[800px] flex flex-col bg-amber-100 mt-4'>
+        <div>
+          <h2 className='mb-2 text-amber-950 font-semibold'>
+            Выбран пользователь: {selectedRowData.firstName} {selectedRowData.lastName}
+          </h2>
+          <p>Описание: {selectedRowData.description}</p>
+          <p>Адрес проживания: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.streetAddress}</span></p>
+          <p>Город: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.city}</span></p>
+          <p>Провинция/штат: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.state}</span></p>
+          <p>Индекс: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.zip}</span></p>
+        </div>
+      </div>}
     </div>
   )
 }
