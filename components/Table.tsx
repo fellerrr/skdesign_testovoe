@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   getFilteredRowModel, RowData,
 } from '@tanstack/react-table'
-import {DataType} from "@/types/types";
+import {DataType, isDataType} from "@/types/types";
 import {useEffect, useMemo, useState} from "react";
 import {DebouncedInput} from "@/components/DebouncedInput";
 import {AddRow} from "@/components/AddRow";
@@ -216,18 +216,20 @@ function App() {
       </div>
 
 
-      {Object.keys(selectedRowData as object).length > 0  &&<div className='px-10 py-4 w-[800px] flex flex-col bg-amber-100 mt-4'>
-        <div>
-          <h2 className='mb-2 text-amber-950 font-semibold'>
-            Выбран пользователь: {selectedRowData.firstName} {selectedRowData.lastName}
-          </h2>
-          <p>Описание: {selectedRowData.description}</p>
-          <p>Адрес проживания: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.streetAddress}</span></p>
-          <p>Город: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.city}</span></p>
-          <p>Провинция/штат: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.state}</span></p>
-          <p>Индекс: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.zip}</span></p>
-        </div>
-      </div>}
+      {/*{Object.keys(selectedRowData as object).length > 0  &&*/}
+      {isDataType(selectedRowData) &&
+        <div className='px-10 py-4 w-[800px] flex flex-col bg-amber-100 mt-4'>
+          <div>
+            <h2 className='mb-2 text-amber-950 font-semibold'>
+              Выбран пользователь: {selectedRowData.firstName} {selectedRowData.lastName}
+            </h2>
+            <p>Описание: {selectedRowData.description}</p>
+            <p>Адрес проживания: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.streetAddress}</span></p>
+            <p>Город: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.city}</span></p>
+            <p>Провинция/штат: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.state}</span></p>
+            <p>Индекс: <span className='text-orange-950 font-semibold'>{selectedRowData.address?.zip}</span></p>
+          </div>
+        </div>}
     </div>
   )
 }
