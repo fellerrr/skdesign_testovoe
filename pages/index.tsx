@@ -2,7 +2,7 @@ import Table from '@/components/Table'
 import {URL_LARGE_DATA, URL_SMALl_DATA} from '@/constants'
 import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { AppDispatch } from '@/store/store';
+import { useAppDispatch } from '@/store/store';
 import {selectData} from '@/store/table/tableSelectors'
 import {fetchData} from '@/store/table/tableThunks'
 import Loading from "@/components/Loading";
@@ -10,7 +10,7 @@ import Loading from "@/components/Loading";
 export default function Home() {
   const [url, setUrl] = useState('')
   const data = useSelector(selectData)
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (url) {
